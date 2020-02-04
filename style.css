@@ -258,10 +258,7 @@ article, aside, dialog, figcaption, figure, footer, header, hgroup, main, nav, s
   grid-template-columns: repeat(1, 12fr);
 }
 
-.item-td-img {
-display: none;
-}
-
+ 
 .item-content{
   font-size: 0.8rem;
 }
