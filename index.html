@@ -1,205 +1,11 @@
-<script>
-  // Author : Babak Jahangiri
 
-  const shoppingCart = [];
-  const stock = [];
 
-  //item defination
-  const item = function(id, name, price, qty) {
-      this.id = id;
-      this.name = name;
-      this.qty = qty;
-      this.price = price;
-    };
-
-  const stockItem = function(id,name,price,imagefile){
-    
-    this.id = id;
-    this.name = name;
-    this.price = price;
-    this.imagefile = imagefile;
-
-  }
-
-//init function which must load in the body
-function init()
-{
-  loadStock();
-
-}
-
-  function loadStock()
-  {
-    stock.push(new stockItem(101,"Eloquent Javascript, 3rd Edition",20.32,"eloquentjs.jpg"));
-    stock.push(new stockItem(102,"JavaScript and JQuery",18.75,"js_jq.jpg"));
-    stock.push(new stockItem(103,"Learn ECMAScript, 2nd Edition",29.99,"learn-ecmas.jpg"));
-    stock.push(new stockItem(104,"JavaScript & jQuery: The Missing Manual",34.85,"missingm.jpg"));
-  }
-   
-   function findItemInStock(id)
-   {
-    for (var i in stock)
-    {
-      if (stock[i].id == id) {
-        return new stockItem(id,stock[i].name,stock[i].price,stock[i].imagefile);
-      }
-    }
-   }
-
-  function addToCart(id)
-  {
-    var myItemInStock = findItemInStock(id);
-    var imagefile = "";
-    if (myItemInStock != null)
-      imagefile = myItemInStock.imagefile;
-
-      if (IsItemAvailableInCart(id) == true) {
-        addItem(myItemInStock.id,myItemInStock.name,myItemInStock.price,1);
-         var cartItem = GetItemFromCart(id);
-         
-
-          document.getElementById("qty-" + id).innerHTML = cartItem.qty;
-          document.getElementById("price-" + id).innerHTML = (cartItem.qty * cartItem.price).toFixed(2) + ' £'
-          document.getElementById("total").innerHTML = SubTotal() + " £";
-          document.getElementById("itemsno").innerHTML = ItemsInCart();
-        
-      }
-      else
-      {
-        addItem(myItemInStock.id,myItemInStock.name,myItemInStock.price,1);
-
-        var cart_TR = document.createElement('tr');
-        cart_TR.setAttribute('id',id);
-        var cart_Tbody =document.getElementsByTagName('tbody')[0];
-        var cartRowContents = `<td><img src="images/` + imagefile + `" class="img-cart"></td>
-                              <td>Product Name Dada</td>
-                              <td>` + myItemInStock.price + `</td>
-                              <td id='qty-` + id + `'>` + 1 + `</td>
-                              <td class="text-right" id='price-` + id + `'>` + myItemInStock.price + ` £</td>
-                              <td class="text-right">
-                              <button class="btn btn-sm btn-danger" onclick='removeFromCart(`+ id +`)'><i class="fa fa-trash"></i></button>
-                              </td>`;
-        cart_TR.innerHTML = cartRowContents;
-        cart_Tbody.append(cart_TR);
-
-        document.getElementById("total").innerHTML = SubTotal() + " £";
-        document.getElementById("itemsno").innerHTML = ItemsInCart();
-  
-      }
-
-  }
-
-  function removeFromCart(id){
-    
-     //Remove from Array 
-     removeItemAll(id);
-
-    //Remove From the UI
-    var cartRow = document.getElementById(id).remove();
-
-    //Update the Total in the UI
-    document.getElementById("total").innerHTML = SubTotal() + " £";
-    document.getElementById("itemsno").innerHTML = ItemsInCart();
-        
-  }
-
-  function addItem(id, name, price, qty) {
-    for (var i in shoppingCart) {
-      if (shoppingCart[i].id === id) {
-        shoppingCart[i].qty += qty; //Increase Qty per addItem is Calling ..
-        return;
-      }
-    }
-
-    var myItem = new item(id, name, price, qty);
-    shoppingCart.push(myItem);
-  }
-
-  function removeOneItem(id) {
-    for (var i in shoppingCart) {
-      if (shoppingCart[i].id === id) {
-        shoppingCart[i].qty--; // remove one from the qty
-        if (shoppingCart[i].qty === 0) {
-          shoppingCart.splice(i, 1);
-        }
-        break;
-      }
-    }
-  }
-
-  function removeItemAll(id) {
-    for (var i in shoppingCart) {
-      if (shoppingCart[i].id == id) {
-        shoppingCart.splice(i, 1);
-        break;
-      }
-    }
-  }
-
-  function clearCart() {
-    cart = [];
-  }
-
-  function ItemsInCart() {
-    var totalItem = 0;
-    for (var i in shoppingCart) {
-      totalItem += shoppingCart[i].qty;
-    }
-    return (totalItem > 1) ? totalItem + ' items' : totalItem + ' item';
-  }
-
-  function IsItemAvailableInCart(id){
-    rslt = false;
-    for (var i in shoppingCart)
-    {
-      if (shoppingCart[i].id == id) 
-        return true;
-    }
-
-    return rslt;
-  }
-
-  function GetItemFromCart(id){
-    for (var i in shoppingCart)
-    {
-      if (shoppingCart[i].id == id) 
-         return new item(id,shoppingCart[i].name,shoppingCart[i].price,shoppingCart[i].qty);
-    }
-  }
-
-  function SubTotal() {
-    var totalAmount = 0;
-
-    for (var i in shoppingCart) {
-      totalAmount += shoppingCart[i].qty * shoppingCart[i].price;
-    }
-    return totalAmount.toFixed(2);
-  }
-
-  function saveCart() {
-    localStorage.setItem("shoppingCart", JSON.stringify(shoppingCart));
-  }
-
-  function loadCart() { //I've not used 
-    shoppingCart = JSON.parse(localStorage.getItem("shoppingCart"));
-  }
-
-  function test()
-  { 
-    console.log("---------- cart --------");
-    console.log(shoppingCart);
-    saveCart();
-  }
-</script>
 
 <html>
   <head>
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
-
+    
     <link
       href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
       rel="stylesheet"
@@ -207,11 +13,26 @@ function init()
       crossorigin="anonymous"
     />
     <link rel="stylesheet" href="style.css">
+
+    
+
     <title>Shopping Cart</title>
+    
+    <script>
+      function test()
+      { 
+        // console.log("---------- stock --------");
+        // console.log(stock);
+
+        console.log("---------- cart --------");
+        console.log(shoppingCart);
+
+        saveCart();
+      }
+    </script>
   </head>
   <body onload="init()">
     <main class="container">
-       
       <section class="jumbotron text-center">
         <div class="container">
             <h1 class="jumbotron-heading">Javascript Shopping cart</h1>
@@ -219,12 +40,11 @@ function init()
          </div>
     </section>
 
-      <section class="row mb-4">
-        <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-          <div class="card">
+      <section class="g-container">
+          <div class="item-card">
             <img src="images/eloquentjs.jpg" class="card-img-top" alt="Eloquent Javascript" title="Eloquent Javascript">
-            <div class="card-body">
-              <p class="card-text">Eloquent Javascript, 3rd Edition: A Modern Introduction to Programming
+            <div class="item-card-body">
+              <p class="item-card-text">Eloquent Javascript, 3rd Edition: A Modern Introduction to Programming
                 <br>
                 <b>£20.32</b><span class="cart-text-notice"> + Free delivery</span>
                 <br>
@@ -232,65 +52,66 @@ function init()
               </p>
             </div>
           </div>
-        </div>
+         
 
-        <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-          <div class="card">
+      
+          <div class="item-card">
             <img src="images/js_jq.jpg" class="card-img-top" alt="JavaScript and JQuery" title="JavaScript and JQuery">
-            <div class="card-body">
-              <p class="card-text">
+            <div class="item-card-body">
+              <p class="item-card-text">
                 <br>JavaScript and JQuery: Interactive Front-End Web Development
-                <br><span class="product-price-drop">£30.99</span> <span class="cart-text-notice">£18.75</span>
+                <br><span class="product-price-drop">£30.99</span> <span class="cart-text-notice">£18.75</span><br>
                 <button type="button" class="btn btn-primary mt-2" onclick='addToCart(102)'>Add to cart</button>
               </p>
             </div>
           </div>
-        </div>
+        
 
 
-        <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-          <div class="card">
+         
+          <div class="item-card">
             <img src="images/learn-ecmas.jpg" class="card-img-top" alt="Learn ECMAScript" title="Learn ECMAScript">
-            <div class="card-body">
-              <p class="card-text">
+            <div class="item-card-body">
+              <p class="item-card-text">
                 Learn ECMAScript: Discover the Latest ECMAScript Features in Order to Write Cleaner Code and Learn the Fundamentals of JavaScript, 2nd Edition
-                <br> <b>£29.99</b>
-                <br>
+                <br> <b>£29.99</b><br>
                 <button type="button" onclick='addToCart(103)' class="btn btn-primary mt-2">Add to cart</button>
               </p>
             </div>
           </div>
-        </div>
+        
 
-        <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12">
-          <div class="card">
+        
+          <div class="item-card">
             <img src="images/missingm.jpg" class="card-img-top" alt="JavaScript & jQuery: The Missing Manual" title="JavaScript & jQuery: The Missing Manual">
-            <div class="card-body">
-              <p class="card-text">
+            <div class="item-card-body">
+              <p class="item-card-text">
                 JavaScript & jQuery: The Missing Manual
                 <br><b>£34.85</b>
                 <br><button type="button" onclick='addToCart(104)' class="btn btn-primary mt-2">Add to cart</button>
               </p>
             </div>
           </div>
-        </div>
+       
+
+
         </section>
 
-        <section class="row">
+        <section class="cart-row">
           <div class="col-12">
             <div class="table-responsive">
               <table class="table table-striped">
                 <thead>
                   <tr>
-                    <th scope="col"></th>
-                    <th scope="col">Product</th>
-                    <th scope="col">Fee</th>
-                    <th scope="col">Quantity</th>
-                    <th scope="col" class="text-right">Price</th>
+                    <th class="item-td-img"></th>
+                    <th>Product</th>
+                    <th>Fee</th>
+                    <th>Quantity</th>
+                    <th class="text-right">Price</th>
                     <th></th>
                   </tr>
                 </thead>
-                <tbody><!-- cart items-->
+                <tbody class="cart-body"><!-- cart items-->
                 </tbody>
                 <tfoot>
                   <tr>
@@ -324,3 +145,5 @@ function init()
 
   </body>
 </html>
+
+<script src="cart.js"></script>
